@@ -38,6 +38,7 @@ public class StylistTimeSlotRepositoryImpl implements QueryStylistTimeSlotReposi
 			builder.equal(stylistSlot.get("valid"), true),
 			builder.equal(stylistJoin.get("status"), "ready"),
 			builder.not(stylistSlot.get("id").in(subquery))
+			// limit by date range also...
 		);
 		criteria.select(stylistSlot);
 		
