@@ -1,4 +1,4 @@
-package bjornn.borg.appointment.model;
+package bjornn.borg.appointment.model.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
