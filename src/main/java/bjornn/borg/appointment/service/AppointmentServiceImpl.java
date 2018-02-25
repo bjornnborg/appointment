@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import bjornn.borg.appointment.dao.AppointmentRepository;
 import bjornn.borg.appointment.dao.CustomerRepository;
 import bjornn.borg.appointment.dao.StylistTimeSlotRepository;
+import bjornn.borg.appointment.exception.MandatoryDataMissingException;
+import bjornn.borg.appointment.exception.UnavailableTimeSlotException;
 import bjornn.borg.appointment.model.AppointmentRequest;
 import bjornn.borg.appointment.model.TimeSlot;
 import bjornn.borg.appointment.model.entity.Appointment;
@@ -45,17 +47,17 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public Appointment createAppointment(AppointmentRequest appointmentRequest) {
+	public Appointment createAppointment(AppointmentRequest appointmentRequest) throws MandatoryDataMissingException, UnavailableTimeSlotException {
 		Customer customer = customerRepository.findOne(appointmentRequest.getCustomer().getId());		
 		if (customer == null) {
-			throw new RuntimeException("Customer unavailable");
+			throw new MandatoryDataMissingException("Customer doesn't exists");
 		}		
 		
 		TimeSlot desiredTimeSlot = appointmentRequest.getTimeSlot();		
 		List<StylistTimeSlot> availableStylistsSlots = stylistTimeSlotRepository.findAvailableStylistsSlots(desiredTimeSlot);
 
 		if (availableStylistsSlots.isEmpty()) {
-			throw new RuntimeException("Unavailable time slot");
+			throw new UnavailableTimeSlotException("Unavailable time slot");
 		}
 		
 		StylistTimeSlot luckyTimeSlot = availableStylistsSlots.get(new Random().nextInt(availableStylistsSlots.size()));
@@ -64,10 +66,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 	
 	@Transactional
 	@Override
-	public Appointment reschedule(AppointmentRequest appointmentRequest) {
+	public Appointment reschedule(AppointmentRequest appointmentRequest) throws MandatoryDataMissingException, UnavailableTimeSlotException {
 		boolean success = this.unschedule(appointmentRequest.getId());
 		if (!success) {
-			throw new RuntimeException("Appointment doesn't exist");
+			throw new MandatoryDataMissingException("Appointment doesn't exists");
 		}
 		return this.createAppointment(appointmentRequest);
 	}
