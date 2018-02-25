@@ -22,6 +22,7 @@ public class AppointmentRepresentation extends ResourceSupport {
 	
 	public AppointmentRepresentation(Appointment model) {
 		this.appointment = model;
+		this.add(linkTo(methodOn(AppointmentController.class).mine(appointment.getCustomer().getId())).withRel("mine"));
 		this.add(linkTo(methodOn(AppointmentController.class).getAppointment(appointment.getId())).withSelfRel());
 	}
 

@@ -21,10 +21,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TimeSlot {
 	
-	@JsonFormat(timezone="GMT-3")
 	private Date start;	
-	
-	@JsonFormat(timezone="GMT-3")
 	private Date end;
 	
 	public static TimeSlot from(String start, String end) {

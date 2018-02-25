@@ -10,6 +10,7 @@ import bjornn.borg.appointment.model.entity.Customer;
 @AllArgsConstructor
 public class AppointmentRequest {
 	
+	private Long id;
 	private Customer customer;
 	private TimeSlot timeSlot;
 
