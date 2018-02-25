@@ -6,10 +6,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Appointment {
 	
 	@Id
@@ -19,5 +23,10 @@ public class Appointment {
 	private StylistTimeSlot timeSlot;
 	@OneToOne
 	private Customer customer;
-
+	
+	public Appointment(StylistTimeSlot timeSlot, Customer customer) {
+		this.timeSlot = timeSlot;
+		this.customer = customer;
+	}
+	
 }

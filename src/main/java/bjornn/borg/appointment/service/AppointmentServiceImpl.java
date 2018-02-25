@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import bjornn.borg.appointment.dao.AppointmentRepository;
+import bjornn.borg.appointment.dao.CustomerRepository;
 import bjornn.borg.appointment.dao.StylistTimeSlotRepository;
 import bjornn.borg.appointment.model.AppointmentRequest;
 import bjornn.borg.appointment.model.TimeSlot;
@@ -23,6 +24,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
 	private AppointmentRepository appointmentRepository;
+	
+	@Autowired
+	private CustomerRepository customerRepository;
 	
 	@Autowired
 	private StylistTimeSlotRepository stylistTimeSlotRepository;
@@ -40,19 +44,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public Appointment createAppointment(AppointmentRequest appointmentRequest) {
-		System.out.println(appointmentRequest);
+		TimeSlot desiredTimeSlot = appointmentRequest.getTimeSlot();
 		
-		Random random = new Random(1000);
-		Appointment appointment = new Appointment();
-		appointment.setId(random.nextLong());
+		List<StylistTimeSlot> availableStylistsSlots = stylistTimeSlotRepository.findAvailableStylistsSlots(desiredTimeSlot);
+		if (availableStylistsSlots.isEmpty()) {
+			throw new RuntimeException("Unavailable time slot");
+		}
 		
-		Stylist stylist = new Stylist(random.nextLong(), "Some Stylist", "ready");
-		TimeSlot timeSlot = TimeSlot.from("2018-08-17 11:00", "2018-08-17 11:30");
-		StylistTimeSlot stylistTimeSlot = new StylistTimeSlot(random.nextLong(), stylist, timeSlot, true);
+		StylistTimeSlot luckyTimeSlot = availableStylistsSlots.get(new Random().nextInt(availableStylistsSlots.size()));
+		Customer customer = customerRepository.findOne(appointmentRequest.getCustomer().getId());
 		
-		appointment.setTimeSlot(stylistTimeSlot);
-		appointment.setCustomer(new Customer(random.nextLong(), "Some customer"));
-		return appointment;
+		if (customer == null) {
+			throw new RuntimeException("Customer unavailable");
+		}		
+		
+		return appointmentRepository.save(new Appointment(luckyTimeSlot, customer));
 	}
 	
 }

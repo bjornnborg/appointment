@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.persistence.Embeddable;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TimeSlot {
 	
-	private Date start;
+	@JsonFormat(timezone="GMT-3")
+	private Date start;	
+	
+	@JsonFormat(timezone="GMT-3")
 	private Date end;
 	
 	public static TimeSlot from(String start, String end) {

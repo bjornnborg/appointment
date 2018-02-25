@@ -1,9 +1,13 @@
 package bjornn.borg.appointment.model.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +24,7 @@ public class Stylist {
 	private Long id;
 	private String name;
 	private String status;
+	@OneToMany(fetch=FetchType.LAZY)
+	private List<StylistTimeSlot> stylistTimeSlot;
 
 }

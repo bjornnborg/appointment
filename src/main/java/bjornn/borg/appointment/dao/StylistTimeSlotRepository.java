@@ -6,4 +6,5 @@ import bjornn.borg.appointment.model.entity.StylistTimeSlot;
 
 public interface StylistTimeSlotRepository extends JpaRepository<StylistTimeSlot, Long>, QueryStylistTimeSlotRepository {
 
+
 }
