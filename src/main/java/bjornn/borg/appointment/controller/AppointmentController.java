@@ -31,7 +31,7 @@ public class AppointmentController {
 	@Autowired
 	private AppointmentService appointmentService;
 	
-	@GetMapping
+	@GetMapping("/timeslots")
 	public ResponseEntity<List<TimeSlot>> getAvailableDates() {
 		return ResponseEntity.ok(appointmentService.findDaysToSchedule());
 	}

@@ -39,6 +39,7 @@ public class StylistTimeSlotRepositoryImpl implements QueryStylistTimeSlotReposi
 			builder.not(stylistSlot.get("id").in(subquery))
 			// limit by date range also...
 		);
+		
 		criteria.select(stylistSlot);
 		
 		TypedQuery<StylistTimeSlot> query = entityManager.createQuery(criteria);

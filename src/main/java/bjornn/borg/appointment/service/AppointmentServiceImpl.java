@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.auditing.AuditingHandler;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import bjornn.borg.appointment.dao.AppointmentRepository;
 import bjornn.borg.appointment.dao.CustomerRepository;
@@ -20,7 +21,6 @@ import bjornn.borg.appointment.model.AppointmentRequest;
 import bjornn.borg.appointment.model.TimeSlot;
 import bjornn.borg.appointment.model.entity.Appointment;
 import bjornn.borg.appointment.model.entity.Customer;
-import bjornn.borg.appointment.model.entity.Stylist;
 import bjornn.borg.appointment.model.entity.StylistTimeSlot;
 
 @Service
@@ -35,6 +35,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Autowired
 	private StylistTimeSlotRepository stylistTimeSlotRepository;
 	
+	@Autowired
+	private AuditingHandler auditingHandler;
+	
 	@Override
 	public List<TimeSlot>findDaysToSchedule() {
 		List<StylistTimeSlot> availableSlots = stylistTimeSlotRepository.findAvailableSlots();
@@ -42,13 +45,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return uniqueAvailableSlots;
 	}
 	
-	public boolean scheduleFor(Date when) {
-		return false;
-	}
-
 	@Override
+	@Transactional
 	public Appointment createAppointment(AppointmentRequest appointmentRequest) throws MandatoryDataMissingException, UnavailableTimeSlotException {
-		Customer customer = customerRepository.findOne(appointmentRequest.getCustomer().getId());		
+		Customer customer = customerRepository.findOne(appointmentRequest.getCustomer().getId());
 		if (customer == null) {
 			throw new MandatoryDataMissingException("Customer doesn't exists");
 		}		
@@ -61,7 +61,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 		
 		StylistTimeSlot luckyTimeSlot = availableStylistsSlots.get(new Random().nextInt(availableStylistsSlots.size()));
-		return appointmentRepository.save(new Appointment(luckyTimeSlot, customer));
+		Appointment appointment = appointmentRepository.save(new Appointment(luckyTimeSlot, customer));
+		try { 
+			this.ensureThatTimeslotIsStillMine(luckyTimeSlot);
+		} catch (ObjectOptimisticLockingFailureException alreadyTaken) {
+			throw new UnavailableTimeSlotException("Unavailable time slot");
+		}
+		return appointment;
+	}
+	
+	private void ensureThatTimeslotIsStillMine(StylistTimeSlot stylistTimeSlot) {
+		stylistTimeSlot.setTouchValue(new Random().nextInt()); // change some unimportant column to force update and version increase
+		//this.auditingHandler.markModified(stylistTimeSlot); // didn't work
+		stylistTimeSlotRepository.saveAndFlush(stylistTimeSlot);		
 	}
 	
 	@Transactional

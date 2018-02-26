@@ -1,6 +1,5 @@
 package bjornn.borg.appointment.controller.advice;
 
-import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
