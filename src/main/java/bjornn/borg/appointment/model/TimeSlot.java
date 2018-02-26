@@ -6,20 +6,18 @@ import java.util.Date;
 
 import javax.persistence.Embeddable;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class TimeSlot {
+public class TimeSlot implements Comparable<TimeSlot> {
 	
 	private Date start;	
 	private Date end;
@@ -34,6 +32,17 @@ public class TimeSlot {
 			e.printStackTrace();
 		}
 		return instance;
+	}
+
+	@Override
+	public int compareTo(TimeSlot other) {
+		int order = this.start.compareTo(other.start); 
+		if (order == 0) {
+			order = this.end.compareTo(other.end);
+		}
+		
+		return order;
+		
 	}
 	
 }

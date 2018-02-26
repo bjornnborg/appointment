@@ -1,8 +1,8 @@
 package bjornn.borg.appointment.controller;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class AppointmentController {
 	private AppointmentService appointmentService;
 	
 	@GetMapping("/timeslots")
-	public ResponseEntity<List<TimeSlot>> getAvailableDates() {
+	public ResponseEntity<SortedSet<TimeSlot>> getAvailableDates() {
 		return ResponseEntity.ok(appointmentService.findDaysToSchedule());
 	}
 	

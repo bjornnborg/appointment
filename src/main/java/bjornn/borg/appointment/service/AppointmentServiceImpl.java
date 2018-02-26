@@ -1,9 +1,9 @@
 package bjornn.borg.appointment.service;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +39,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private AuditingHandler auditingHandler;
 	
 	@Override
-	public List<TimeSlot>findDaysToSchedule() {
+	public SortedSet<TimeSlot>findDaysToSchedule() {
 		List<StylistTimeSlot> availableSlots = stylistTimeSlotRepository.findAvailableSlots();
-		ArrayList<TimeSlot> uniqueAvailableSlots = new ArrayList<TimeSlot>(availableSlots.stream().map(stl -> stl.getTimeSlot()).collect(Collectors.toSet()));
-		return uniqueAvailableSlots;
+		return availableSlots.stream().map(stl -> stl.getTimeSlot()).collect(Collectors.toCollection(TreeSet::new));
 	}
 	
 	@Override
