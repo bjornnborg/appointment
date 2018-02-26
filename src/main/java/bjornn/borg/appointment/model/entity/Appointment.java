@@ -19,6 +19,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @NoArgsConstructor
 @Builder
 @JsonSerialize
+/**
+ * A customer booked to talk to a stylist at a given time slot
+ */
 public class Appointment {
 	
 	@Id

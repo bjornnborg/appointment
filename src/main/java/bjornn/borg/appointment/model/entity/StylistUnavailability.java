@@ -11,12 +11,16 @@ import lombok.Data;
 
 @Entity
 @Data
+/**
+ * Date range to indicate that a stylist will be unavailable.
+ */
 public class StylistUnavailability {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	// refactor to timeslot
 	private Date start;
 	private Date end;
 	

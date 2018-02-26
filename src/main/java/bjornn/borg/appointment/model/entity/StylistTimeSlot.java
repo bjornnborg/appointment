@@ -25,6 +25,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @EqualsAndHashCode(exclude={"version"})
 @Builder
+/**
+ * Time slot for each stylist based on his availabilit.
+ * Should be created or mark invalid elsewhere. Maybe a job can create time slot from time to time.
+ * This same job could also mark time slots as invalid if it matches some "out of office" configuration.
+ *
+ */
 public class StylistTimeSlot {
 	
 	@Id
